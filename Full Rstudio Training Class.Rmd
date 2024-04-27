@@ -1,0 +1,1773 @@
+---
+title: "Basic to Advanced Data Analytics Together with Basic Mathematical Computation in R-Studio"
+author: "Tutor: Lumumba Wandera Victor"
+date: "2023-07-06"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    fig_width: 10
+    fig_height: 10
+  word_document:
+    toc: yes
+---
+
+\newpage
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE,comment = NA, message=FALSE,
+                      fig.height=4, fig.width=6)
+```
+
+## MATRIX
+A matrix is a rectangular array of numbers arranged in rows and columns. It's a fundamental mathematical concept used in various fields, including mathematics, physics, engineering, computer science, and economics. Matrices are used to represent and manipulate data, solve systems of linear equations, perform transformations, and more.
+
+Matrix operations are foundation concepts in mathematics and have widespread applications in various fields. Understanding matrices and their operations is essential for solving complex mathematical problems, analyzing data, and developing algorithms in diverse areas of study. Whether you're a mathematician, scientist, engineer, or programmer, proficiency in matrices is a valuable skill that can greatly enhance your problem-solving abilities and analytical capabilities.
+
+### Have the following libraries loaded
+```{r}
+library(pracma)
+library(Matrix)
+library(RConics)
+library(matrixcalc)
+```
+
+### Matrix Creation
+```{r}
+A <- matrix(c(5,6,2,8,9,2,4,5,1),ncol = 3, nrow = 3, byrow = F)
+A
+```
+
+### Getting the determinant of a matrix
+```{r}
+det(A)
+```
+
+### Inverse
+```{r}
+solve(A)
+```
+
+### Identity Matrix
+```{r}
+
+```
+
+### Matrix Operation 
+```{r}
+B <- matrix(c(3,4,6,2,3,4,5,2,5), ncol = 3, nrow = 3, byrow = T)
+C <- matrix(c(8,5,3,2,3,5,9,3,3), ncol = 3, nrow = 3, byrow = T)
+```
+
+### View the matrix
+```{r}
+B
+C
+```
+
+### Matrix Addition
+```{r}
+B+C
+```
+
+### Matrix Subtraction
+```{r}
+B-C
+```
+
+### Matrix Division
+```{r}
+B/C
+```
+
+### Matrix Multiplication
+```{r}
+B%*%C
+```
+
+### Getting the Identity Matrix
+```{r}
+zapsmall(solve(A)%*%A)
+```
+
+### Adjoint of matrix
+```{r}
+A <- matrix(c(13,-4,2,-4,13,-2,2,-2,10), nrow = 3, ncol = 3, byrow = TRUE)
+A
+```
+
+### Obtain the polynomal function
+```{r}
+cf <- charpoly(A)
+cf
+```
+
+```{r}
+adj_A <- adjoint(A)
+adj_A
+```
+
+### Cofactor of Matrix A
+```{r}
+t(adj_A)
+```
+
+### Obtain the Eigen value and Eigen Vectors
+```{r}
+E_V <- eigen(A)
+```
+
+### Eigen Values
+```{r}
+E_V$values
+```
+
+### Eigen Vector
+```{r}
+Eigen_vector <-as.data.frame(E_V$vectors)
+names(Eigen_vector) <- c("Y1","Y2","Y3")
+Eigen_vector
+```
+
+## Solve for the unknowns in three system of linear equations
+you can solve systems of linear equations for unknowns X, Y, and Z in R. There are multiple ways to achieve this, but one common approach is to use the solve() function or functions from linear algebra libraries such as solve() from base R or functions from packages like MASS or Matrix. Here's an example using the base R solve() function:
+### Two Unknown (X, Y)
+```{r}
+# Coefficient matrix
+A <- matrix(c(2,3,
+              2,4), nrow = 2, ncol = 2, byrow = TRUE)
+
+# Constants vector
+B <- c(10, 5)
+
+# Solve the system of equations
+solution <- solve(A, B)
+
+# Print the solution
+print(solution)
+```
+
+### Three unknown (X, Y, Z)
+```{r}
+knitr::include_graphics("solve.png")
+```
+
+Suppose you have a system of linear equations:
+```{r}
+# Coefficient matrix
+A <- matrix(c(2,3,-1,
+              1,-2,2,
+              3,1,-4), nrow = 3, ncol = 3, byrow = TRUE)
+
+# Constants vector
+B <- c(10, 5, 7)
+
+# Solve the system of equations
+solution <- solve(A, B)
+
+# Print the solution
+print(solution)
+
+```
+
+## Solving quadratic and Cubic Function
+### Quadratic Function
+```{r}
+quad <- function(a, b, c)
+{
+  a <- as.complex(a)
+  answer <- c((-b + sqrt(b^2 - 4 * a * c)) / (2 * a),
+              (-b - sqrt(b^2 - 4 * a * c)) / (2 * a))
+  if(all(Im(answer) == 0)) answer <- Re(answer)
+  if(answer[1] == answer[2]) return(answer[1])
+  answer
+}
+
+quad(a = 1, b = -8, c = 12)
+```
+
+### Cubic Function
+```{r}
+if(!require('RConics')) {
+    install.packages('RConics')
+    library('RConics')
+}
+library(ggplot2)
+library(ggthemes)
+
+
+# cubic equation x^3 - 6x^2 + 11x - 6 = 0
+# parameter
+b <- c(1,-6, 11, -6)
+
+# roots
+x0 <- cubic(b)
+x0
+
+# Generate data
+x <- seq(0, 4, by = 0.001)
+y <- b[1] * x^3 + b[2] * x^2 + b[3] * x + b[4]
+
+# Create data frame
+df <- data.frame(x = x, y = y)
+head(df,5)
+
+# Plot using ggplot2
+ggplot(df, aes(x = x, y = y)) +
+  geom_line() +
+  geom_point(data = data.frame(x0 = x0, y = rep(0, length(x0))), aes(x = x0, y = y), color = "red", size = 3) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  labs(x = "x", y = "y", title = "Cubic Function Plot") +
+  ggtitle("The Plot showing the Solution to a 
+          Cubic Function") +
+  theme(plot.title = element_text(size = 5))+  # Adjust the font size here
+  theme_economist()
+
+```
+
+### Load the library that you are not sure if its installed
+```{r}
+if(!require('tidyverse')){
+  install.packages("tidyverse")
+  library(tidyverse)
+}
+```
+
+### Additional Example
+```{r}
+m <- c(1,  -36,   405, -1458)
+cubic(m)
+```
+
+### Data Importation (Comma Seperated Values, csv)
+```{r}
+data <- read.csv("Gapminder.csv")
+head(data,5)
+```
+
+### Manual Data Entry
+```{r}
+age <- c(45,65,34,32,23,25,56,76,45,22,21,45,34,56,54)
+height <- c(122,134,144,165,155,133,123,132,145,154,166,134,121,154,165)
+```
+
+### Data Framing
+```{r}
+mydata <- data.frame(age, height)
+head(mydata,5)
+```
+
+
+### Descriptive Statistics
+```{r}
+library(stargazer)
+library(gtsummary)
+stargazer(data[,-2], type = "text")
+```
+
+### Additional Way of Displaying Summary Statistics.
+```{r}
+### Load the libraries
+library("ggplot2")
+library("devtools")
+library("predict3d")
+library("psych")
+library("dplyr")
+library("gtsummary")
+library("DescTools")
+library("nortest") 
+library("lmtest")
+library("sandwich")
+```
+
+### Display the Summary Statistics
+```{r}
+knitr::kable(
+  describeBy(data[c(-1,-2,-3, -4)]) %>% round(2) 
+)
+```
+
+### Correlationa and Covariances
+```{r}
+data22 <- read.csv("german_credit__data.csv")
+attach(data22)
+head(data22,5)
+```
+
+### How many observations do we have in our data set
+```{r}
+str(data22)
+```
+
+### Eliminate Missing Observations
+```{r}
+data22<- na.omit(data22)
+```
+
+### Confirm the Remaining Observations
+```{r}
+str(data22)
+```
+
+### Correlation Matrix
+```{r}
+COR <- data.frame(Age, Credit.amount,Duration)
+head(COR,5)
+```
+
+```{r}
+cor(COR)
+```
+
+### Visualize the Results in Stargazer
+```{r}
+stargazer(cor(COR),type = "text")
+```
+
+### The Covariance Matrix
+```{r}
+stargazer(cov(COR), type = "text")
+```
+
+### Basic R Commands
+* head
+* tail
+* str
+* list
+* attach
+* Renaming data set
+* View
+
+### Example of how these commands are used
+```{r}
+list(data22)
+```
+
+### Data Visualization
+#### Histogram
+```{r}
+hist(data$gdp_cap, breaks = 45, 
+     xlab = "gdp per capita", 
+     ylab = "Frequency", 
+     main = "Histogram Showing the distribution of gdp per capita")
+```
+
+
+## Additional Practice Questions for Histogram
+### Create the Data
+```{r}
+set.seed(1234)
+df <- data.frame(
+  sex=factor(rep(c("F", "M"), each=200)),
+  weight=round(c(rnorm(200, mean=55, sd=5), rnorm(200, mean=65, sd=5)))
+  )
+head(df)
+```
+
+### Create the Histogram
+```{r}
+ggplot(df, aes(x=weight)) + 
+  ggtitle("Histogram showing the distribution of Weight")+
+  geom_histogram(color="black", fill="steelblue")
+```
+
+### Add mean line to the histogram
+```{r}
+ggplot(df, aes(x=weight)) + 
+  ggtitle("Histogram showing the distribution of Weight")+
+  geom_histogram(color="black", fill="steelblue")+
+  geom_vline(aes(xintercept=mean(weight)),
+            color="blue", linetype="dashed", size=1)
+```
+
+### Add the median line to the histogram
+```{r}
+ggplot(df, aes(x=weight)) + 
+  ggtitle("Histogram showing the distribution of Weight")+
+  geom_histogram(color="black", fill="steelblue")+
+  geom_vline(aes(xintercept=median(weight)),
+            color="blue", linetype="dashed", size=1)
+```
+
+### Distinguish Histogran by Gender
+```{r}
+# Change histogram plot line colors by groups
+ggplot(df, aes(x=weight, color=sex)) +
+  geom_histogram(fill="white")+
+  ggtitle("Histogram showing the distribution of Weight")
+# Overlaid histograms
+ggplot(df, aes(x=weight, color=sex)) +
+  geom_histogram(fill="white", alpha=0.5, position="identity")+
+  ggtitle("Histogram showing the distribution of Weight")
+```
+
+### Calculate the mean of each group :
+The package plyr is used to calculate the average weight of each group :
+```{r}
+library(plyr)
+mu <- ddply(df, "sex", summarise, grp.mean=mean(weight))
+mu
+```
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+df %>%
+  group_by(sex) %>%
+  get_summary_stats(weight, type = "mean_sd")
+```
+
+```{r}
+p<-ggplot(df, aes(x=weight, fill=sex, color=sex)) +
+  geom_histogram(position="identity", alpha=0.5)
+p
+# Add mean lines
+p+geom_vline(data=mu, aes(xintercept=grp.mean, color=sex),
+             linetype="dashed")
+```
+
+### Customized Histogram
+```{r}
+ggplot(df, aes(x=weight, color=sex, fill=sex)) +
+  geom_histogram(aes(y=..density..), position="identity", alpha=0.5)+
+  geom_density(alpha=0.6)+
+  geom_vline(data=mu, aes(xintercept=grp.mean, color=sex),
+           linetype="dashed")+
+  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+  labs(title="Weight histogram plot",x="Weight(kg)", y = "Density")+
+  theme_classic()
+```
+
+### Line Chart
+```{r}
+### Import the data
+line_plot <- read.csv("training model.csv")
+attach(line_plot)
+head(line_plot,5)
+```
+
+### Multiple Line plot
+```{r fig.height=4, fig.width=7}
+library(ggplot2)
+ggplot(data = line_plot, aes(x = year)) +
+  geom_line(aes(y = CPI, color = "Consumer Price Index")) +
+  geom_line(aes(y = Exch.Rate, color = "Exchange Rate")) +
+  geom_line(aes(y = Lend.Int.Rates, color = "Lending Interest Rate")) +
+  labs(x = "Time (years)", y = "Rates", color = "Lines") +
+  scale_color_manual(values = c("blue", "red", "green")) +
+  ggtitle("Line Plots Showing Trends in CPI, Exchange Rate and Lending Interest Rates") +
+  theme_economist()
+```
+
+```{r}
+gdp_growth <- read.csv("gdp_growth.csv")
+attach(gdp_growth)
+head(gdp_growth,5)
+```
+
+```{r}
+ggplot(data = gdp_growth, aes(x = year)) +
+  geom_line(aes(y = GDP.growth..annual..., color = "GDP Growth (%)")) +
+  labs(x = "Time (years)", y = "GDP Growth", color = "Lines") +
+  scale_color_manual(values = c("blue")) +
+  ggtitle("Line Plots Showing Trends GDP Growth over time") +
+  theme_economist()
+```
+
+
+### Dot Plot
+```{r}
+# Install and load the necessary packages
+library(ggplot2)
+
+# Create a sample dataset
+dataset <- data.frame(
+  category = c("A", "B", "C", "D", "E"),  # Categories on the y-axis
+  value = c(10, 15, 8, 12, 6)             # Values on the x-axis
+)
+
+# Create the dot plot
+ggplot(data = dataset, aes(x = value, y = category)) +
+  geom_point(size = 3) +
+  labs(x = "Value", y = "Category") +
+  ggtitle("Dot Plot") +
+  theme_minimal()
+
+```
+
+### Additional Chart
+```{r}
+data <- read.csv("Gapminder.csv")
+head(data,5)
+attach(data)
+```
+
+```{r}
+ggplot(data = data, aes(x = gdp_cap,y = continent)) +
+  geom_point(size = 3) +
+  labs(x = "gdp_cap", y = "Continent") +
+  ggtitle("Dot Plot of GDP Per Capital Across Continents") +
+  theme_minimal()
+```
+
+### Leaf and Stem Plot
+```{r}
+stem(life_exp)
+```
+
+This kind of a chart is not appropriate for a lage data set. Consider the chart below. 
+```{r}
+ages <- rnorm(200, mean = 45, sd = 14)
+stem(ages)
+```
+
+### A scatter plot with Regression Equation
+```{r}
+income <- read.csv("income.csv")
+attach(income)
+head(income,5)
+```
+
+```{r}
+library(ggpmisc)
+library(ggplot2)
+ggplot(data = income, aes(x = Income, y = Consumption)) +
+  stat_poly_line() +
+  stat_poly_eq(eq.with.lhs = "italic(hat(y))~`=`~",
+               use_label(c("eq", "R2"))) +
+  ggtitle("A scatter plot of Income and Consumption") +
+  geom_point()
+```
+
+### Additional Scatter Plot
+```{r}
+data <- read.csv("Gapminder.csv")
+head(data,5)
+attach(data)
+```
+
+```{r}
+ggplot(data = data, aes(x = ln_gdpPercap, y = ln_life_exp)) +
+  stat_poly_line() +
+  stat_poly_eq(eq.with.lhs = "italic(hat(y))~`=`~",
+               use_label(c("eq", "R2"))) +
+  ggtitle("A scatter plot of life expectancy and gdp per capita") +
+  geom_point()
+```
+
+### Box Plot
+```{r}
+boxplot(life_exp ~ continent, main ="Box plots of lifeExp across continents",
+        xlab="Continents",ylab="lifeExp",
+        col=rainbow(5))
+```
+
+### Bar Graph
+#### Load the data
+```{r}
+BAR <- read.csv("superstore.csv")
+attach(BAR)
+head(BAR,5)
+View(BAR)
+```
+
+### Create Grouped Summaries
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+
+SUM <- BAR %>%
+  group_by(Ship_Mode) %>%
+  get_summary_stats(Sales, type = "mean_sd")
+SUM
+```
+
+### Create the Bar Graph
+```{r}
+ggplot(data = SUM, aes(x = Ship_Mode, y = mean)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Ship_Mode", y = "Mean") +
+  ggtitle("Bar Graph of Average Sales for Various Ship Modes") +
+  theme_minimal()
+```
+
+### Additional Bar Graph
+```{r}
+SUM2 <- BAR %>%
+  group_by(Sub_Category) %>%
+  get_summary_stats(Sales, type = "mean_sd")
+SUM2
+```
+
+### Run the Command below to Create the bar graph of mean sales across Sub categories
+```{r}
+ggplot(data = SUM2, aes(x = Sub_Category, y = mean)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(x = "Sub Category", y = "Mean") +
+  ggtitle("Bar Graph of Average Sales for Various Sub Category") +
+  theme_minimal()+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+### Pie Chart
+```{r}
+pie(SUM$mean, labels = SUM$Ship_Mode, col = rainbow(length(SUM$mean)))
+```
+
+### Create pie chart with values and percentages
+```{r}
+# Calculate the percentages
+percentages <- SUM$mean / sum(SUM$mean) * 100
+
+# Create the pie chart with values and percentages
+pie(SUM$mean, labels = paste(SUM$Ship_Mode, "\n", SUM$mean, " (", round(percentages, 1), "%)", sep = ""), col = rainbow(length(SUM$mean)))
+```
+
+## Testing the Normality of the Data
+### Shapiro wilks statistics
+```{r}
+data <- read.csv("Gapminder.csv")
+head(data,5)
+attach(data)
+```
+
+### Perform the test
+```{r}
+shapiro.test(gdp_cap)
+```
+
+The Shapiro-Wilk test was performed on the variable gdp_cap. The test result shows a test statistic (W) of 0.6522 and an extremely small p-value (p-value < 2.2e-16). Since the p-value is less than 0.05 (assuming a common significance level), we reject the null hypothesis that the data follows a normal distribution. The extremely small p-value indicates strong evidence against the normality assumption for the gdp_cap dataset.
+
+### Run the test for normally distributed data
+```{r}
+scores <- rnorm(200, mean = 45, sd = 14)
+scores
+```
+
+```{r}
+scores <- data.frame(scores)
+scores
+```
+
+```{r}
+## Rename the dataset
+random <-scores
+head(random,5)
+attach(random)
+```
+
+```{r}
+shapiro.test(random$scores)
+```
+
+## Make a histogram to Visualize the results
+```{r}
+### Make a histogram
+hist(random$scores, breaks = 14, prob = TRUE, main = "Histogram of scores with Normal Curve")
+curve(dnorm(x, mean = mean(random$scores), sd = sd(random$scores)), add = TRUE, col = "blue", lwd = 2)
+```
+
+### Parametric Test
+#### One sample T-test
+```{r}
+t.test(scores, mu=40, alternative = "greater", conf.level = 0.90)
+```
+
+### Interpretation!!! (student's part)
+
+### Two Samples T-test
+#### Dependent t-test
+```{r}
+weight_before <- c(75,90,78,65,78,89,87,65,67,78,45,67,67,87,90)
+weight_after <- c(73,85,70,59,72,90,81,60,64,71,39,69,73,82,83)
+```
+
+### Data frame the dataset
+```{r}
+paired <- data.frame(weight_before, weight_after)
+head(paired,5)
+```
+
+### Perform the test
+```{r}
+t.test(weight_before, weight_after, alternative = "two.sided", paired = T, var.equal = T, conf.level = 0.99, data = paired)
+```
+
+### Student's part!!!
+
+### Unpaired T-test/ Independent t-test
+```{r}
+library(magrittr)
+library(gapminder)
+attach(gapminder)
+```
+
+```{r}
+df1 <- gapminder %>%
+  dplyr::select(country, lifeExp, year)%>%
+  filter(country == "Kenya"|
+           country == "Tanzania")
+
+head(df1,14)
+tail(df1,14)
+t.test(data = df1, lifeExp ~ country, alternative = "greater", conf.level = 0.99, var.equal = F)
+```
+
+```{r}
+df2 <- gapminder %>%
+  dplyr::select(country, gdpPercap, year)%>%
+  filter(country == "Kenya"|
+           country == "Tanzania")
+
+head(df2,14)
+tail(df2,14)
+t.test(data = df2, gdpPercap ~ country, alternative = "greater", conf.level = 0.99, var.equal = F)
+```
+
+### One-way ANOVA
+
+```{r}
+head(gapminder,5)
+```
+
+```{r}
+results <- aov(lifeExp~continent)
+summary(results)
+
+```
+
+### Post Hoc Analysis
+```{r}
+library(agricolae)
+TKy <- TukeyHSD(results)
+TKy
+```
+
+```{r}
+par(oma=c(0,5,0,0)) # adjust the margins because the factor names are long
+plot(TukeyHSD(results, conf.level = 0.99),las=1, col = "blue")
+```
+
+### Two-way ANOVA
+```{r}
+ANOVA <- read.csv("yields.csv")
+attach(ANOVA)
+head(ANOVA,5)
+```
+
+### Create Factors and Levels
+```{r}
+ANOVA$Fertilizer.Used<-factor(ANOVA$Fertilizer.Used, levels = c(1,2,3,4),
+                              labels = c("DAP", "NPK", "AMONNIA","PHOSPHATE"))
+ANOVA$Blocks <- factor(ANOVA$Blocks, levels = c(1,2,3,4),
+                       labels = c("Block1", "Block2","Block3","Block4"))
+```
+
+### View the dataset
+```{r}
+head(ANOVA,5)
+View(ANOVA)
+```
+
+### Get the grouped summary Statistics for Yields across fertilizer used
+```{r}
+grouped_summaries <- ANOVA %>%
+  group_by(Fertilizer.Used) %>%
+  get_summary_stats(Yields, type = "mean_sd")
+grouped_summaries
+```
+
+### Box plot of Yields for Various Fertilizer Used
+```{r}
+ggplot(ANOVA, aes(x = Fertilizer.Used, y = Yields, fill = Fertilizer.Used)) +
+  labs(title = "Box plot of Yields for various Fertilizer Used", y = "Yields", x = "Fertilizer")+
+  geom_boxplot()
+```
+
+
+### Get the summary statistics for Yields across blocks
+```{r}
+grouped_summaries2 <- ANOVA %>%
+  group_by(Blocks) %>%
+  get_summary_stats(Yields, type = "mean_sd")
+grouped_summaries2
+```
+
+### Box plot of Yields for Various Blocks
+```{r}
+ggplot(ANOVA, aes(x = Blocks, y = Yields, fill = Blocks)) +
+  labs(title = "Box plot of Yields for various Blocks", y = "Yields", x = "Blocks")+
+  geom_boxplot()
+```
+
+### Estimate the linear Model and Extract the ANOVA Results
+```{r}
+linear_model <- lm(Yields ~ Fertilizer.Used+Blocks, data = ANOVA)
+my_model <- anova(linear_model)
+my_model
+```
+
+## NON_PARAMETRIC TESTS
+### Wilcoxon Signed-Rank Test:
+The Wilcoxon signed-rank test is used to compare paired or related samples. It assesses whether there is a significant difference between the measurements or observations taken from the same subjects or units under two different conditions or time points. The test is appropriate for data that are not normally distributed or when the assumption of normality is violated.
+#### Create the dataset
+```{r}
+before <- c(87,98,77,89,90,100,110,89,77,68,65,67,87,98,67,87)
+after <- c(80,90,68,77,81,95,102,77,69,60,59,60,79,88,63,80)
+```
+
+### Data Frame the data
+```{r}
+weight_frame <- data.frame(before,after)
+head(weight_frame,5)
+```
+
+### Group the Data
+```{r}
+library(dplyr)
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+weight_frame <- weight_frame %>%
+  gather(key = "time", value = "weight", before, after) %>%
+  convert_as_factor(time)
+head(weight_frame, 5)
+```
+
+```{r}
+View(weight_frame)
+```
+
+### Perform the test
+```{r}
+result <- wilcox.test(weight~time, paired = TRUE, data = weight_frame)
+result
+```
+
+### Mann-Whitney U-Test
+The Mann-Whitney U test (also called the Wilcoxon rank-sum test) compares two independent groups or conditions to determine if there is a significant difference between their distributions or medians. This test is appropriate when comparing two groups without assuming normality or when the data are ordinal or skewed.
+
+### The data
+```{r}
+head(df1,5)
+```
+
+### Perform the Test
+```{r}
+result1 <- wilcox.test(lifeExp~country, paired = F, data = df1)
+result1
+```
+
+### Kruskall Wallis
+The Kruskal-Wallis test is a nonparametric test used to compare the medians of three or more independent groups. It is an extension of the Mann-Whitney U test (Wilcoxon rank-sum test) for two groups. The Kruskal-Wallis test does not assume that the data are normally distributed and can handle ordinal or non-normally distributed data.
+
+### The data
+```{r}
+library(magrittr)
+df23 <- gapminder %>%
+  dplyr::select(country, lifeExp)%>%
+  filter(country == "Kenya"|
+           country == "Morocco"|
+           country == "United States"|
+           country == "Afghanistan"|
+           country == "Canada")
+
+head(df23,5)
+View(df23)
+```
+
+### Grouped Summary Statistics
+```{r}
+detach("package:plyr", unload=TRUE)
+library(dplyr)
+group_by(df23, country) %>%
+  summarise(
+    count = n(),
+    mean = mean(lifeExp, na.rm = TRUE),
+    sd = sd(lifeExp, na.rm = TRUE),
+    median = median(lifeExp, na.rm = TRUE),
+    max = max(lifeExp, na.rm = TRUE),
+    min = min(lifeExp, na.rm = TRUE),
+    IQR = IQR(lifeExp, na.rm = TRUE)
+  )
+```
+
+### Use Box Plot to Visualize the Data
+```{r}
+library("ggpubr")
+ggboxplot(df23, x = "country", y = "lifeExp",
+          color = "country", palette = c("#00AFBB", "#E7B800", "#FC4E07","#000000","#00FF00"),
+          order = c("Afghanistan", "Canada", "Kenya","Morocco","United States"),
+          ylab = "Life Expectancy", xlab = "Countries")
+```
+
+
+### Compute Kruskal-Wallis test
+We want to see if the median life expectancy in five continents vary significantly. The test can be run using the kruskal.test() function as follows.
+
+### The data
+```{r}
+head(df23,5)
+```
+
+### Conduct the Test
+```{r}
+kruskal.test(lifeExp ~ country, data = df23)
+```
+
+### LINEAR REGRESSION ANALYSIS
+Statistical techniques are tools that enable us to answer questions about possible patterns in empirical data. It is not surprising, then, to learn that many important techniques of statistical analysis were developed by scientists who were interested in answering very specific empirical questions. So it was with regression analysis. The history of this particular statistical technique can be traced back to late nineteenth-century England and the pursuits of a gentleman scientist, Francis Galton. Galton was born into a wealthy family that produced more than its share of geniuses; he and Charles Darwin, the famous biologist, were first cousins. During his lifetime, Galton studied everything from fingerprint classification to meteorology, but he gained widespread recognition primarily for his work on inheritance. His most important insight came to him while he was studying the inheritance of one of the most obvious of all human characteristics: height. In order to understand how the characteristic of height was passed from one generation to the next, Galton collected data on the heights of individuals and the heights of their parents. After constructing frequency tables that classified these individuals both by their height and by the average height of their parents, Galton came to the unremarkable conclusion that tall people usually had tall parents and short people usually had short parents.
+
+### Assumption of Regression Analysis
+
+*1. The error term has a population mean of zero*
+*2. All independent variables are uncorrelated with the error term*
+*3. Observations of the error term are uncorrelated with each other*
+*4. The error term has a constant variance (no heteroscedasticity)*
+*5. No independent variable is a perfect linear function of other explanatory variables*
+*6. The error term is normally distributed (optional)*
+
+### Load the data
+```{r}
+mydatta <- read.csv("Unemployment.csv")
+attach(mydatta)
+head(mydatta,5)
+```
+
+### To be continued!!!!
+### Estimate the Model
+```{r}
+my_model <- lm(log(Inflation)~log(Unemployment)+log(FedRate), data = mydatta)
+```
+
+### Visualize the Model Using Stargazer Library
+```{r}
+library(stargazer)
+stargazer(my_model, type = "text")
+```
+
+### Model Interpretation
+The model above presents the results of a regression analysis with the dependent variable "log(Inflation)" and three independent variables: "log(Unemployment)", "log(FedRate)", and the constant term.
+The coefficients estimated for each independent variable represent the relationship between that variable and the dependent variable while holding other variables constant. The coefficients are accompanied by standard errors in parentheses.
+
+*log(Unemployment):* 
+The coefficient estimate for log(Unemployment) is 0.176. This means that a one-unit increase in the natural logarithm of unemployment is associated with a 0.176 unit increase in the natural logarithm of inflation. The standard error of 0.157 indicates the uncertainty in this estimate.
+
+*log(FedRate):*
+The coefficient estimate for log(FedRate) is 0.976. This suggests that a one-unit increase in the natural logarithm of the Federal Reserve interest rate is associated with a 0.976 unit increase in the natural logarithm of inflation. The standard error of 0.085 provides an indication of the precision of this estimate.
+
+*Constant:*
+The constant term in the model is -0.902. This represents the expected value of the natural logarithm of inflation when all independent variables are zero. The standard error of 0.291 reflects the uncertainty in this estimation.
+
+The observations in the dataset used for the analysis are 164. The R-squared value of 0.473 indicates that approximately 47.3% of the variance in the natural logarithm of inflation can be explained by the independent variables included in the model. The adjusted R-squared value of 0.466 on the other hand accounts for the degrees of freedom in the model and provides a more conservative estimate of the proportion of variance explained.
+
+The residual standard error of 0.498 indicates the average deviation of the observed values of the dependent variable from the predicted values, taking into account the degrees of freedom in the model.
+
+The F-statistic of 72.167, with 2 and 161 degrees of freedom, suggests that the overall model is statistically significant. The associated p-value is less than 0.01, indicating strong evidence against the null hypothesis of no relationship between the independent variables and the dependent variable.
+
+In summary, the model suggests that only log(Unemployment) has a statistically significant relationship with log(Inflation). However, it is important to note that these interpretations are based on the given coefficients, standard errors, and significance levels. Further analysis and consideration of the model's assumptions are necessary for a comprehensive understanding of the relationships between the variables.
+
+## Testing the Assumptions
+### Normality of the error term
+```{r}
+library(forecast)
+checkresiduals(my_model)
+```
+
+### Zero Conditional Mean
+```{r}
+ReSid<-resid(my_model)
+```
+
+### Add the residual variable to the data set
+```{r}
+mydatta$ReSid <- ReSid
+head(mydatta,5)
+```
+
+### View Summary Statistics
+### Additional Way of Displaying Summary Statistics.
+```{r}
+### Load the libraries
+library("ggplot2")
+library("devtools")
+library("predict3d")
+library("psych")
+library("dplyr")
+library("gtsummary")
+library("DescTools")
+library("nortest") 
+library("lmtest")
+library("sandwich")
+```
+
+### Display the Summary Statistics
+```{r}
+knitr::kable(
+  describeBy(mydatta[,-1]) %>% round(3) 
+)
+```
+
+
+### The variance covariance assumption
+```{r}
+cov(ReSid, Unemployment)
+cov(ReSid, FedRate)
+```
+
+### Plot the Residuals
+```{r}
+ts.plot(ReSid)
+abline(0,0.0000)
+```
+
+### Multicollinearity
+```{r}
+library(car)
+library(tseries)
+vif(my_model)
+```
+
+### Heteroscedasticity
+```{r}
+ncvTest(my_model)
+```
+
+Since the p-value is greater than the conventional significance level of 0.05, we fail to reject the null hypothesis of constant variance. This means that there is not enough evidence to conclude that the variance of the residuals varies across the range of the predictor variable(s).
+
+### Autocorrelation
+```{r}
+durbinWatsonTest(my_model)
+```
+
+The Durbin-Watson (D-W) statistic is a test used to detect the presence of autocorrelation in the residuals of a regression model. It measures the degree of correlation between adjacent residuals. The D-W statistic ranges from 0 to 4, with values around 2 indicating no autocorrelation, values below 2 suggesting positive autocorrelation, and values above 2 indicating negative autocorrelation.
+
+## Suppose the variance of the Error terms was not homoscedastic
+### Estimating the Regression Model with Robust Standard errors
+Robust standard errors, also known as heteroscedasticity-robust standard errors or White's standard errors, are a method to estimate the standard errors in regression analysis that account for potential heteroscedasticity (unequal variances) in the error terms.
+
+In ordinary least squares (OLS) regression, the standard errors assume that the error terms have constant variance. However, in real-world data, it is common to encounter situations where the variability of the error terms changes across different levels of the independent variables. This violates the assumption of homoscedasticity, leading to incorrect standard error estimates, t-statistics, and p-values.
+
+Robust standard errors address this issue by providing more accurate estimates of the standard errors that are robust to heteroscedasticity. They are calculated by estimating the variance-covariance matrix of the coefficient estimates using methods that do not assume constant variance of the errors.
+
+There are different types of robust standard errors, including the HC1, HC2, and HC3 estimators, which differ in the specific assumptions they make about the structure of heteroscedasticity. These estimators are implemented in the sandwich package in R.
+
+By using robust standard errors, researchers can obtain more reliable inference in regression analysis, particularly when there is evidence or suspicion of heteroscedasticity. Robust standard errors allow for valid hypothesis tests, confidence intervals, and t-statistics, even in the presence of heteroscedasticity, providing more accurate and robust statistical inference.
+```{r}
+library(sandwich)
+library(lmtest)
+robust_se <- sqrt(diag(vcovHC(my_model, type = "HC1")))
+robust_se
+```
+
+### View the Model
+```{r}
+coeftest(my_model, vcov = vcovHC(my_model, type = "HC1"))
+```
+
+### LINEAR REGRESSION ANALYSIS
+Statistical techniques are tools that enable us to answer questions about possible patterns in empirical data. It is not surprising, then, to learn that many important techniques of statistical analysis were developed by scientists who were interested in answering very specific empirical questions. So it was with regression analysis. The history of this particular statistical technique can be traced back to late nineteenth-century England and the pursuits of a gentleman scientist, Francis Galton. Galton was born into a wealthy family that produced more than its share of geniuses; he and Charles Darwin, the famous biologist, were first cousins. During his lifetime, Galton studied everything from fingerprint classification to meteorology, but he gained widespread recognition primarily for his work on inheritance. His most important insight came to him while he was studying the inheritance of one of the most obvious of all human characteristics: height. In order to understand how the characteristic of height was passed from one generation to the next, Galton collected data on the heights of individuals and the heights of their parents. After constructing frequency tables that classified these individuals both by their height and by the average height of their parents, Galton came to the unremarkable conclusion that tall people usually had tall parents and short people usually had short parents.
+
+### Assumption of Regression Analysis
+*1. The regression model is linear in the coefficients and the error term*
+*2. The error term has a population mean of zero*
+*3. All independent variables are uncorrelated with the error term*
+*4. Observations of the error term are uncorrelated with each other*
+*5. The error term has a constant variance (no heteroscedasticity)*
+*6. No independent variable is a perfect linear function of other explanatory variables*
+*7. The error term is normally distributed (optional)*
+
+### Load the data
+```{r}
+mydatta <- read.csv("Unemployment.csv")
+attach(mydatta)
+head(mydatta,5)
+```
+
+### Estimate the Model
+```{r}
+my_model <- lm(log(Inflation)~log(Unemployment)+log(FedRate), data = mydatta)
+summary(my_model)
+```
+
+### Visualize the Model Using Stargazer Library
+```{r}
+library(stargazer)
+stargazer(my_model, type = "text")
+```
+
+### Obtain AIC and BIC for you Model
+```{r}
+library(broom)
+glance(my_model)
+```
+
+### Model Interpretation
+The model above presents the results of a regression analysis with the dependent variable "log(Inflation)" and three independent variables: "log(Unemployment)", "log(FedRate)", and the constant term.
+The coefficients estimated for each independent variable represent the relationship between that variable and the dependent variable while holding other variables constant. The coefficients are accompanied by standard errors in parentheses.
+
+*log(Unemployment):* 
+The coefficient estimate for log(Unemployment) is 0.176. This means that a one-unit increase in the natural logarithm of unemployment is associated with a 0.176 unit increase in the natural logarithm of inflation. The standard error of 0.157 indicates the uncertainty in this estimate.
+
+*log(FedRate):*
+The coefficient estimate for log(FedRate) is 0.976. This suggests that a one-unit increase in the natural logarithm of the Federal Reserve interest rate is associated with a 0.976 unit increase in the natural logarithm of inflation. The standard error of 0.085 provides an indication of the precision of this estimate.
+
+*Constant:*
+The constant term in the model is -0.902. This represents the expected value of the natural logarithm of inflation when all independent variables are zero. The standard error of 0.291 reflects the uncertainty in this estimation.
+
+The observations in the dataset used for the analysis are 164. The R-squared value of 0.473 indicates that approximately 47.3% of the variance in the natural logarithm of inflation can be explained by the independent variables included in the model. The adjusted R-squared value of 0.466 on the other hand accounts for the degrees of freedom in the model and provides a more conservative estimate of the proportion of variance explained.
+
+The residual standard error of 0.498 indicates the average deviation of the observed values of the dependent variable from the predicted values, taking into account the degrees of freedom in the model.
+
+The F-statistic of 72.167, with 2 and 161 degrees of freedom, suggests that the overall model is statistically significant. The associated p-value is less than 0.01, indicating strong evidence against the null hypothesis of no relationship between the independent variables and the dependent variable.
+
+In summary, the model suggests that only log(Unemployment) has a statistically significant relationship with log(Inflation). However, it is important to note that these interpretations are based on the given coefficients, standard errors, and significance levels. Further analysis and consideration of the model's assumptions are necessary for a comprehensive understanding of the relationships between the variables.
+
+### Obtain the Root Mean Square Error
+```{r}
+summary_model <- summary(my_model)
+```
+
+### Extract RMSE from the summary
+```{r}
+rmse <- sqrt(summary_model$sigma^2)
+```
+
+### Print the summary and RMSE
+```{r}
+print(summary_model)
+cat("Root Mean Square Error (RMSE):", rmse, "\n")
+```
+
+### Variables Selection
+```{r}
+library(olsrr)
+my_model.aic<-ols_step_forward_aic(my_model,details=TRUE)
+```
+
+## Testing the Assumptions
+### Normality of the error term
+```{r}
+library(forecast)
+checkresiduals(my_model)
+```
+
+### Zero Conditional Mean
+```{r}
+ReSid<-resid(my_model)
+```
+
+### Add the residual variable to the data set
+```{r}
+mydatta$ReSid <- ReSid
+head(mydatta,5)
+```
+
+### View Summary Statistics
+```{r}
+library(stargazer)
+library(gtsummary)
+stargazer(mydatta[,-1], type = "text")
+```
+
+### The variance covariance assumption
+```{r}
+cov(ReSid, Unemployment)
+cov(ReSid, FedRate)
+```
+
+### Plot the Residuals
+```{r}
+ts.plot(ReSid)
+abline(0,0.0000)
+```
+
+### Multicollinearity
+```{r}
+library(car)
+library(tseries)
+vif(my_model)
+```
+
+### Heteroscedasticity
+```{r}
+ncvTest(my_model)
+```
+### Autocorrelation
+```{r}
+durbinWatsonTest(my_model)
+```
+
+## Suppose the variance of the Error terms was not homoscedastic
+### Estimating the Regression Model with Robust Standard errors
+Robust standard errors, also known as heteroscedasticity-robust standard errors or White's standard errors, are a method to estimate the standard errors in regression analysis that account for potential heteroscedasticity (unequal variances) in the error terms.
+
+In ordinary least squares (OLS) regression, the standard errors assume that the error terms have constant variance. However, in real-world data, it is common to encounter situations where the variability of the error terms changes across different levels of the independent variables. This violates the assumption of homoscedasticity, leading to incorrect standard error estimates, t-statistics, and p-values.
+
+Robust standard errors address this issue by providing more accurate estimates of the standard errors that are robust to heteroscedasticity. They are calculated by estimating the variance-covariance matrix of the coefficient estimates using methods that do not assume constant variance of the errors.
+
+There are different types of robust standard errors, including the HC1, HC2, and HC3 estimators, which differ in the specific assumptions they make about the structure of heteroscedasticity. These estimators are implemented in the sandwich package in R.
+
+By using robust standard errors, researchers can obtain more reliable inference in regression analysis, particularly when there is evidence or suspicion of heteroscedasticity. Robust standard errors allow for valid hypothesis tests, confidence intervals, and t-statistics, even in the presence of heteroscedasticity, providing more accurate and robust statistical inference.
+```{r}
+library(sandwich)
+library(lmtest)
+robust_se <- sqrt(diag(vcovHC(my_model, type = "HC1")))
+robust_se
+```
+
+### View the Model
+```{r}
+coeftest(my_model, vcov = vcovHC(my_model, type = "HC1"))
+```
+
+### OMMITTED VARIABLE BIASE
+#### Estimate the first model
+```{r}
+fit <- lm(Inflation~Unemployment+FedRate, data = mydatta)
+```
+
+```{r}
+library(rempsyc)
+library(jtools)
+stargazer(fit,type = "text")
+```
+
+### Run the second model
+```{r}
+fit2 <- lm(Inflation~FedRate, data = mydatta)
+```
+
+```{r}
+stargazer(fit2,confint = TRUE, digits = 3, type = "text")
+```
+
+### Test the omitted variable bias
+```{r}
+library(lmtest)
+waldtest(fit,fit2,test = "F")
+```
+
+The null hypothesis for this test states that the coefficient of the omitted variable is zero. Here the implication is that if we accept the null hypothesis, the variable was correctly omitted. On the other hand, the alternative hypothesis states that the coefficient of the omitted variable is not equal to zero. Therefore, rejecting the null hypothesis indicates that the variable was incorrectly omitted. From the results above, the p-value is approximately 0.6704, which indicates that we fail to reject the null hypothesis and conclude that the variable was correctly omitted. Thus, the omitted variable does not helps to explain the variation in the response variable.
+
+### Estimate the third model
+```{r}
+fit3 <- lm(Inflation~Unemployment, data = mydatta)
+```
+
+```{r}
+stargazer(fit3,confint = TRUE, digits = 3, type = "text")
+```
+
+### Test for the omitted variable bias
+```{r}
+waldtest(fit,fit3,test = "F")
+```
+
+The null hypothesis for this test states that the coefficient of the omitted variable is zero. Here the implication is that if we accept the null hypothesis, the variable was correctly omitted. On the other hand, the alternative hypothesis states that the coefficient of the omitted variable is not equal to zero. Therefore, rejecting the null hypothesis indicates that the variable was incorrectly omitted. From the results above, the p-value is approximately 0.001, which indicates that we reject the null hypothesis and conclude that the variable was incorrectly omitted. Thus, the omitted variable helps to explain the variation in the response variable.
+
+### Relative variable Importance
+Relative importance in the context of statistical modeling refers to the degree to which predictor variables contribute to the prediction of the outcome variable or response variable in a model. It quantifies the impact or influence of each predictor relative to others in explaining the variability in the response variable. Understanding the relative importance of predictors is crucial for identifying key variables that have a significant impact on the outcome and for making informed decisions based on statistical analyses.
+
+There are several ways to assess the relative importance of predictors in a model. One common approach is examining the coefficients or parameter estimates associated with each predictor. Larger coefficients typically indicate stronger associations with the response variable, suggesting greater importance. Additionally, the statistical significance of coefficients, as indicated by p-values or confidence intervals, can help determine the importance of predictors. Statistically significant predictors are generally considered more important in explaining variability in the response variable.
+
+Standardized coefficients are another useful measure of relative importance, especially when predictors are on different scales. Standardization allows for comparison of the magnitude of effects across predictors, providing insights into their relative contributions to the model.
+
+Moreover, techniques such as variance inflation factor (VIF) analysis help identify multicollinearity among predictors, which can affect the stability and interpretation of coefficient estimates. Predictors with high VIF values may have inflated coefficients, suggesting potential issues with redundancy or collinearity.
+
+Partial regression plots and other visualization techniques offer additional insights into the relationship between individual predictors and the response variable, controlling for the effects of other predictors. These plots can help assess the unique contribution of each predictor to the model.
+
+In summary, relative importance analysis helps researchers prioritize variables and understand their respective contributions to the prediction of the outcome variable in statistical models, leading to more robust and interpretable results in various fields such as psychology, economics, and epidemiology.
+
+```{r}
+library(relaimpo)
+rel_imp <- calc.relimp(fit, type = "lmg")
+rel_imp
+```
+
+### Plot of Relative Importance
+```{r}
+barplot(sort(rel_imp$lmg), ylab = "Relative Importance", xlab = "Independent variables",
+        main = "A Bar plot of Relative Importance")
+```
+
+### Have the plot in ggplot2
+```{r fig.height=5, fig.width=7}
+library(ggplot2)
+# Convert rel_imp$lmg to a data frame
+df <- data.frame(variable = names(rel_imp$lmg), importance = rel_imp$lmg)
+
+# Arrange the data frame in descending order of relative importance
+df <- df[order(df$importance, decreasing = TRUE), ]
+
+# Create the bar plot using ggplot2
+ggplot(df, aes(x = reorder(variable, -importance), y = importance)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  geom_text(aes(label = paste0(round(importance * 100), "%")), vjust = -0.5, size = 3) +  # Format labels as percentages
+  labs(x = "Independent variables", y = "Relative Importance", 
+       title = "A Bar plot of Relative Importance") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1))  
+
+```
+
+
+## Q-Q PLOT
+Sometimes it’s important to know whether the data is normally distributed. A quantile-quantile plot (QQ plot) is a good first check. It shows the distribution of the data against the expected normal distribution. If the data is normally distributed, the points fall on the 45° reference line. If the data is non-normal, the points deviate noticeably from the reference line.
+### Consider the figure below
+```{r}
+knitr::include_graphics("dist.png")
+```
+
+## Create a Normal Quantile-Quantile (QQ) Plot
+### Positively Skewed Distribution
+```{r}
+mars <- read.csv("http://rtgodwin.com/data/mars.csv")
+write.csv(mars,"mars.csv")
+hist(mars$income, breaks = 25,
+     main = "Histogram of Mars incomes", xlab = "income")
+```
+
+```{r}
+library(car)
+with(mars, qqPlot(income, main = "Q-Q Plot of Income Distribution", xlab = "Theoretical Quantiles", ylab = "Sample Quantiles"))
+```
+
+### Plot the Histogram and Q-Q On the same plot
+```{r}
+par(mfrow = c(1, 2))
+
+# Q-Q plot
+qqPlot(mars$income, main = "Q-Q Plot of Income")
+
+# Histogram
+hist(mars$income, col = "lightblue",breaks = 20, main = "Histogram of Income")
+```
+
+### Negatively Skewed Distribution
+```{r}
+#data <- read.csv("http://rtgodwin.com/data/age-at-death.csv")
+#write.csv(data, "death_age.csv")
+data <- read.csv("death_age.csv")
+hist(data$death.age, breaks = 20, main = "Age at death", xlab = "death age")
+```
+
+```{r}
+library(car)
+with(data, qqPlot(death.age, main = "Q-Q Plot of Death Age", xlab = "Theoretical Quantiles", ylab = "Sample Quantiles"))
+
+```
+
+```{r}
+par(mfrow = c(1, 2))
+# Q-Q plot
+qqPlot(data$death.age, main = "Q-Q Plot of Death Age")
+# Histogram
+hist(data$death.age, col = "lightblue", main = "Histogram of Death Age")
+
+```
+
+## PIECEWISE REGRESSION ESTIMATION 
+Piecewise regression is a valuable tool in statistical modeling, particularly when the relationship between two variables exhibits distinct segments or breakpoints. This approach allows for the modeling of different linear relationships within different ranges of the predictor variable, providing a more flexible and accurate representation of the data. In this comprehensive overview, we'll delve into the concept of piecewise regression, its applications, methodologies, and interpretation, shedding light on its significance in data analysis.
+
+At its core, piecewise regression involves breaking down the dataset into distinct segments or intervals, each characterized by its own linear relationship between the predictor and response variables. Unlike traditional linear regression, which assumes a single continuous relationship, piecewise regression acknowledges and accommodates nonlinearities or structural changes in the data. This flexibility makes it suitable for capturing complex patterns that may be missed by a single linear model.
+
+The motivation behind employing piecewise regression often stems from the recognition that the relationship between the predictor and response variables may not be uniform across the entire range of values. Instead, there may be breakpoints or thresholds at which the nature of the relationship changes abruptly. For example, in environmental studies, the effect of temperature on plant growth may vary depending on whether the temperature falls within a certain range or not. Piecewise regression enables researchers to identify and model such breakpoints, allowing for a more nuanced understanding of the underlying process.
+
+One common application of piecewise regression is in trend analysis, where the objective is to identify changes in the trend of a time series or longitudinal data. For instance, in financial markets, stock prices may exhibit different trends during periods of stability compared to periods of volatility. By fitting separate linear models to different segments of the time series data, piecewise regression can reveal shifts in the trend and help forecast future behavior more accurately.
+
+Another area where piecewise regression finds widespread use is in dose-response modeling, particularly in pharmacology and toxicology. The relationship between the dose of a drug or chemical and its biological effect may not be linear throughout the entire dose range. Instead, there may be dose thresholds beyond which the effect increases or decreases sharply. Piecewise regression allows researchers to estimate these thresholds and characterize the dose-response relationship more precisely, aiding in the determination of safe dosage levels or exposure limits.
+
+Methodologically, fitting a piecewise regression model involves several steps. The first step is to identify potential breakpoints or intervals in the data where the relationship between the predictor and response variables may change. This can be done visually through exploratory data analysis or using statistical techniques such as segmented regression or change-point detection algorithms. Once the breakpoints are identified, the dataset is divided into segments, and separate linear regression models are fitted to each segment.
+
+The choice of breakpoints is crucial and can significantly impact the interpretation and performance of the piecewise regression model. Common approaches for selecting breakpoints include visual inspection of scatter plots, hypothesis testing based on statistical significance, and information criteria such as the Akaike Information Criterion (AIC) or Bayesian Information Criterion (BIC). It's essential to strike a balance between model complexity and goodness of fit, avoiding overfitting while capturing meaningful changes in the relationship.
+
+After fitting the separate linear models to each segment, the next step is to assess the overall fit and interpret the results. This involves evaluating the goodness of fit statistics, such as R-squared or adjusted R-squared, and examining diagnostic plots of residuals to ensure that the model assumptions are met. Additionally, the estimated coefficients for each segment provide insights into the direction and strength of the relationship between the predictor and response variables within different ranges.
+
+Interpreting the results of a piecewise regression model requires careful consideration of the estimated breakpoints and coefficients for each segment. Breakpoints represent critical points in the predictor variable where the relationship with the response variable changes abruptly. Understanding the factors driving these changes can provide valuable insights into the underlying process being studied. Moreover, comparing the coefficients between segments can elucidate how the strength or direction of the relationship varies across different ranges of the predictor variable.
+
+Piecewise regression also offers advantages in terms of model interpretability and predictive accuracy. By capturing nonlinear relationships and breakpoints explicitly, it provides a more intuitive understanding of the data and allows for more accurate predictions, especially in cases where the relationship is highly nonlinear or exhibits distinct phases. Additionally, piecewise regression can help identify outliers or influential data points that may have a disproportionate impact on the overall model fit, leading to more robust and reliable results.
+
+Despite its benefits, piecewise regression also has some limitations and challenges. One potential issue is the subjectivity in selecting breakpoints, which can introduce bias and uncertainty into the analysis. Different methods for choosing breakpoints may yield different results, making it essential to assess the robustness of the findings across multiple approaches. Moreover, piecewise regression assumes that the relationship within each segment is linear, which may not always hold true in practice. Careful diagnostics and sensitivity analyses are necessary to verify the validity of this assumption and ensure the model's reliability.
+
+In conclusion, piecewise regression is a powerful technique for modeling nonlinear relationships and identifying breakpoints or structural changes in the data. By allowing for distinct linear segments, it provides a more flexible and interpretable framework for analyzing complex datasets. From trend analysis and dose-response modeling to environmental studies and beyond, piecewise regression offers valuable insights into the underlying processes driving observed phenomena. However, careful consideration of model assumptions, selection of breakpoints, and interpretation of results are essential for deriving meaningful conclusions from piecewise regression analyses.
+
+### Model One
+```{r}
+# Data
+x <- c(100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300)
+y <- c(9.73, 9.61, 8.15, 6.98, 5.87, 4.98, 5.09, 4.79, 4.02, 4.46, 3.82)
+
+# Segment 1
+x1 <- x[x <= 200]
+y1 <- y[x <= 200]
+model1 <- lm(y1 ~ x1)
+summary(model1)
+r_squared1 <- summary(model1)$r.squared
+```
+
+### Model Two
+```{r}
+# Segment 2
+x2 <- x[x > 200]
+y2 <- y[x > 200]
+model2 <- lm(y2 ~ x2)
+summary(model2)
+r_squared2 <- summary(model2)$r.squared
+
+# Output R-squared values
+cat("R-squared for Segment 1:", r_squared1, "\n")
+cat("R-squared for Segment 2:", r_squared2, "\n")
+```
+
+### Additional Example for Piecewise Regression
+```{r}
+# Simulate some data with a breakpoint
+set.seed(123)
+x <- seq(0, 10, length = 100)
+y <- ifelse(x <= 5, 2*x, 3 + x) + rnorm(100, 0, 0.2)  # Piecewise linear relationship with noise
+
+# Create a data frame
+data <- data.frame(x, y)
+head(data,5)
+```
+
+```{r}
+# Install required package (if not already installed)
+if (!require("segmented")) install.packages("segmented")
+library(segmented)
+
+# Fit the piecewise linear regression model
+segmented_model <- segmented(lm(y ~ x, data = data), seg.eq = ~ x == 5)
+
+# Print the estimated coefficients
+summary(segmented_model)
+
+```
+
+Explanation:
+
+Sample Data: This code creates a data frame (data) with two variables: x (predictor) and y (response). The relationship between y and x is piecewise linear with added noise.
+
+Fitting Piecewise Regression:
+
+segmented(lm(y ~ x, data = data), seg.eq = ~ x == 5): This line fits a piecewise linear model using the segmented function.
+lm(y ~ x, data = data): Fits a basic linear model for reference.
+seg.eq = ~ x == 5: Specifies the breakpoint equation. Here, the breakpoint is estimated to occur when x is equal to 5.
+Summary:
+
+summary(segmented_model): This displays the estimated coefficients for each segment of the piecewise linear model.
+Understanding the output:
+
+The summary of the segmented model will show the estimated intercept and slope for each segment. This allows you to interpret the piecewise linear relationship between the predictor (x) and the response variable (y).
+
+Additional Notes:
+
+You can experiment with different breakpoint locations in the seg.eq argument.
+The segmented package offers functionalities for testing the significance of the breakpoint and visualizing the fitted model. Refer to the package documentation for details.
+
+### Class Assignment
+Using the data below, the researcher suspects that a piecewise linear regression model should be fitted to the data. Estimate the parameters in such a model assuming that the slope of the line changes at x=200 units. Does the data support the use of this model?
+```{r}
+data <- read.csv("piecewise.csv")
+data
+```
+
+```{r}
+# Install required package (if not already installed)
+if (!require("segmented")) install.packages("segmented")
+library(segmented)
+
+# Fit the piecewise linear regression model (replace with your variable names)
+segmented_model <- segmented(lm(y ~ x, data = data), seg.eq = ~ x <= 200)
+
+# Print the estimated coefficients
+summary(segmented_model)
+
+```
+
+### Model Type:
+This is a segmented linear regression model with a single breakpoint estimated at x = 195.766. This indicates that the relationship between the predictor variable (x) and the response variable (y) is linear but can be described by two separate lines with different slopes before and after the breakpoint.
+
+### Coefficients:
+
+Intercept: The estimated intercept for the first segment (x <= 200) is 15.313. This represents the average value of y when x is equal to zero (assuming the linear relationship holds at x = 0).
+x: The coefficient for x in the first segment is -0.05175. This is the slope of the line for x <= 200. A negative value indicates a negative linear relationship, meaning y tends to decrease as x increases in this segment.
+U1.x: This coefficient represents the difference in the intercept between the two segments. It's significant (p-value < 0.05) indicating a jump in the y-intercept at the breakpoint (x = 195.766). The value is 0.039664, suggesting the y-intercept becomes higher after the breakpoint.
+Overall Model Fit:
+
+Residual standard error: This is a measure of the variability of the residuals (difference between observed and predicted values) around the fitted model. A value of 0.3337 suggests a reasonable fit.
+R-squared: The model explains 98.33% of the variance in y. However, keep in mind that R-squared can be inflated with more complex models.
+Adjusted R-squared: This adjusted value for R-squared (0.9762) penalizes for the number of parameters in the model and is a more reliable indicator of fit in this case.
+Additional Notes:
+
+The model output mentions bootstrapping, which is a technique used to estimate the standard errors of the coefficients and assess their variability.
+The convergence information indicates that the model fitting algorithm reached a stable solution.
+Next Steps:
+
+Visualizing the fitted model with the two segments can be helpful for understanding the piecewise relationship. The segmented package provides plotting functionalities.
+You can interpret the slopes (coefficients of x) in each segment to understand how y changes with respect to x in those regions.
+By interpreting the coefficients, breakpoint estimate, and overall model fit statistics, you can gain insights into the nature of the relationship between x and y in your data. The segmented model suggests a significant change in the relationship at x = 195.766, with different slopes governing the changes in y before and after this point.
+
+### Alternative Interpretation
+The segmented regression model presented indicates a structural change or breakpoint in the relationship between the predictor variable x and the response variable y. The estimated breakpoint is located at x=195.766, suggesting that the nature of the relationship between x and y changes significantly around this point. The coefficients of the linear terms provide insights into the relationships within different segments of the data. Specifically, the intercept (β0) and slope (β1) coefficients represent the parameters of the linear model before the breakpoint, while the additional coefficient (U1.x) captures the change in slope after the breakpoint.
+
+Before the breakpoint (x≤195.766), the relationship between x and y is described by the equation y=β0+β 1x. According to the estimated coefficients, the intercept (β0) is 15.313 with a standard error of 0.753708, and the slope (β1) is −0.051750 with a standard error of 
+0.005277. These coefficients indicate that before the breakpoint, the response variable y decreases by approximately 0.051750 units for each unit increase in the predictor variable x, holding all other variables constant.
+
+After the breakpoint (x>195.766), the relationship between x and y follows a different linear model represented by the equation y=β0+(β1+U1.x)x. The additional coefficient U1.x captures the change in slope after the breakpoint. In this model, the estimated coefficient U1.x is0.039664 with a standard error of 0.006615. This coefficient suggests that after the breakpoint, the slope of the relationship between x and y increases by approximately 0.039664 units for each unit increase in x, compared to the slope before the breakpoint.
+
+Overall, the segmented regression model provides a comprehensive understanding of the relationship between the predictor variable x and the response variable y by capturing the structural change or breakpoint in the data. The model allows for distinct linear relationships before and after the breakpoint, enabling more accurate predictions and interpretations. Additionally, the coefficients of the linear terms provide valuable insights into the direction and magnitude of the relationships within each segment, facilitating the identification of critical points and informing decision-making processes.
+
+### Extract the Intercept and Slope for the two models
+```{r}
+# Assuming your model is named 'segmented_model'
+
+# Extract coefficients by name
+segment_coefs <- coef(segmented_model, names = c("Intercept.1", "x.1", "Intercept.2", "x.2"))
+
+# Separate coefficients for each segment (modify variable names if needed)
+intercept1 <- segment_coefs[1]
+slope1 <- segment_coefs[2]
+slope1
+intercept1
+```
+
+```{r}
+intercept2 <- segment_coefs[3]
+slope2 <- segment_coefs[4]
+intercept2
+slope2
+```
+
+## LASSO REGRESSION 
+Lasso regression, short for Least Absolute Shrinkage and Selection Operator, is a widely used technique in the realm of statistical modeling and machine learning. It's particularly valuable when dealing with high-dimensional data, where the number of predictor variables exceeds the number of observations or when the aim is to select a subset of relevant features while simultaneously regularizing the model coefficients. In this comprehensive overview, we'll delve into the concept of Lasso regression, its applications, methodologies, interpretation, advantages, and limitations, shedding light on its significance in data analysis and predictive modeling.
+
+At its core, Lasso regression extends the principles of linear regression by introducing a penalty term that encourages sparsity in the coefficient estimates. Unlike traditional linear regression, which seeks to minimize the residual sum of squares (RSS) between the observed and predicted values, Lasso regression adds a regularization term to the objective function. This regularization term, also known as the L1 penalty, penalizes the absolute values of the coefficients, effectively shrinking some coefficients towards zero and forcing others to exactly zero. As a result, Lasso regression simultaneously performs variable selection and regularization, making it a powerful tool for feature selection and model simplification.
+
+The primary motivation behind using Lasso regression lies in its ability to handle high-dimensional data and mitigate overfitting. In high-dimensional settings, traditional linear regression models may suffer from multicollinearity, where predictor variables are highly correlated, leading to unstable and unreliable coefficient estimates. Lasso regression addresses this issue by automatically selecting a subset of relevant features while penalizing the coefficients of irrelevant or redundant features, effectively reducing model complexity and improving generalization performance. This makes Lasso regression particularly useful in scenarios where feature space dimensionality is high relative to the sample size, such as in genomics, finance, and image processing.
+
+The methodology of Lasso regression involves solving an optimization problem to find the set of coefficients that minimizes the combined loss function of the RSS and the L1 penalty. Mathematically, this can be expressed as:
+
+$$
+\hat{\beta}^{lasso} = \underset{\beta}{\text{argmin}} \left\{ \frac{1}{2n} \sum_{i=1}^{n} (y_i - \beta_0 - \sum_{j=1}^{p} \beta_j x_{ij})^2 + \lambda \sum_{j=1}^{p} |\beta_j| \right\}
+
+$$
+
+β^lasso represents the estimated coefficients obtained from Lasso regression.
+yi is the observed value for the i-th observation.
+xij is the value of the j-th predictor variable for the i-th observation.
+β 0is the intercept term.
+β is the coefficient associated with the j-th predictor variable.
+p is the total number of predictor variables.
+λ is the regularization parameter, also known as the tuning parameter, which controls the strength of the penalty term.
+
+The tuning parameter λ plays a critical role in Lasso regression, as it governs the trade-off between model simplicity and accuracy. A larger value of λ results in greater regularization, leading to more coefficients being shrunk towards zero and ultimately more sparsity in the model. On the other hand, a smaller value of λ reduces the strength of regularization, allowing for a less sparse model with potentially higher predictive accuracy but also a higher risk of overfitting. The choice of λ is typically determined through cross-validation or other model selection techniques to find the optimal balance between bias and variance.
+
+Interpreting the results of Lasso regression involves examining the estimated coefficients and their corresponding magnitudes. Coefficients that are exactly zero indicate that the corresponding predictor variables have been excluded from the model, effectively performing variable selection. Non-zero coefficients represent the remaining features selected by the model and provide insights into their importance and direction of influence on the response variable. By identifying and prioritizing the most influential features, Lasso regression enables practitioners to focus on the most relevant aspects of the data, facilitating decision-making and inference.
+
+One of the key advantages of Lasso regression is its ability to handle multicollinearity and perform feature selection automatically. By penalizing the absolute values of the coefficients, Lasso regression effectively shrinks redundant or irrelevant features towards zero, thus reducing the impact of multicollinearity on the model's stability and interpretability. Moreover, Lasso regression provides a parsimonious model that is easier to interpret and deploy in practice, making it particularly appealing in situations where model transparency and simplicity are valued.
+
+Despite its advantages, Lasso regression also has some limitations and considerations. The choice of the tuning parameter 
+λ can be challenging and may require careful tuning through cross-validation, especially in cases where the dataset is large or noisy. Additionally, Lasso regression tends to shrink coefficients towards zero more aggressively compared to other regularization techniques such as Ridge regression, which may lead to increased bias and underestimation of coefficient magnitudes, particularly in the presence of strong correlations between predictor variables. Moreover, Lasso regression assumes a linear relationship between the predictor and response variables, which may not always hold true in practice and may require additional transformations or adjustments to capture nonlinear relationships effectively.
+
+In conclusion, Lasso regression is a powerful and versatile technique for feature selection and regularization in high-dimensional data settings. By combining variable selection and regularization into a single optimization framework, Lasso regression provides a robust and interpretable model that is well-suited for handling multicollinearity and improving predictive performance. From identifying biomarkers in genomics to predicting customer churn in marketing analytics, Lasso regression offers valuable insights into complex datasets and facilitates data-driven decision-making across various domains. However, careful consideration of the tuning parameter and model assumptions is essential to ensure the reliability and validity of the results obtained from Lasso regression analyses.
+
+### Sample data and output
+```{r}
+# Load required library
+library(glmnet)
+
+# Generate sample data
+set.seed(123)  # Set seed for reproducibility
+n <- 100  # Number of observations
+p <- 10   # Number of predictors
+X <- matrix(rnorm(n * p), ncol = p)  # Generate predictor matrix
+beta_true <- c(3, 0, 2, 0, 0, 0, 0, 0, 0, 0)  # True coefficient vector
+y <- X %*% beta_true + rnorm(n)  # Generate response variable
+
+# Perform Lasso regression
+lasso_model <- glmnet(X, y, alpha = 1)  # Alpha = 1 for Lasso regression
+lasso_model
+
+# Plot the coefficients
+plot(lasso_model, xvar = "lambda", label = TRUE)
+```
+
+The figure shows the results of a penalized regression model, potentially Lasso or Elastic Net, where the coefficients of the model are plotted against the log lambda values. Here's a breakdown of the elements:
+
+Log Lambda (x-axis): This axis represents the regularization parameter (lambda) used in the penalized regression model. Higher lambda values correspond to stronger regularization, which shrinks the coefficients towards zero. The use of the logarithm (log) is often applied to lambda for better visualization across a wider range of values.
+Coefficients (y-axis): This axis represents the estimated coefficients for the features (predictor variables) in the model. Each line in the plot likely corresponds to a different coefficient.
+Lines: The lines in the plot show how the coefficients change as the regularization parameter (lambda) increases. Under stronger regularization (higher lambda), coefficients are expected to shrink towards zero.
+Understanding the Plot:
+
+Flat Line: A flat line for a coefficient indicates that the coefficient is not shrunken by the regularization, and its value remains relatively constant across different lambda values. This might suggest that the feature is important for the model.
+Steep Slope: A coefficient line with a steep slope towards zero indicates that the coefficient is heavily shrunken for larger lambda values. This suggests that the feature might be less important or potentially redundant with other features in the model.
+Additional Notes:
+
+The specific interpretation of the plot depends on the context of your analysis and the features included in the model. You might need to refer to the variable names associated with each line to understand which features they represent.
+Often, the goal is to find a balance between model complexity and performance. A model with very high lambda might have shrunken coefficients too much, reducing its accuracy. Conversely, a model with very low lambda might not benefit from regularization and could lead to overfitting.
+
+### Additional Example
+```{r}
+# Simulate some data
+set.seed(123)
+x1 <- rnorm(100)*10
+x2 <- rnorm(100)*10
+x3 <- rnorm(100)*10
+y <- 3 + 2*x1 + 4*x2 + 5*x3 + rnorm(100, 0, 1)  # Linear relationship with noise
+
+# Create a data frame
+data <- data.frame(x1, x2, x3, y)
+data
+```
+
+
+```{r}
+# Install required package (if not already installed)
+if (!require("glmnet")) install.packages("glmnet")
+library(glmnet)
+
+# Split data into training and test sets (optional for demonstration)
+set.seed(123)  # For reproducibility
+train_index <- sample(1:nrow(data), size = 0.8 * nrow(data))
+train_data <- data[train_index, ]
+test_data <- data[-train_index, ]
+
+# Fit Ridge Regression
+ridge_model <- glmnet(train_data[, -4], train_data$y, alpha = 1, lambda = 0.1)  # alpha=1 for Ridge
+ridge_model
+
+# Fit Lasso Regression
+lasso_model <- glmnet(train_data[, -4], train_data$y, alpha = 0, lambda = 0.1)  # alpha=0 for Lasso
+lasso_model
+
+# Predict on test set (optional - replace with your actual prediction needs)
+#ridge_predictions <- predict(ridge_model, newx = test_data[, -4])
+
+#lasso_predictions <- predict(lasso_model, newdata = test_data[, -4])
+
+```
+
+### Some notes on LASSO and RIDGE regression
+When alpha is set to 1 in the glmnet function from R, it performs Ridge Regression.
+
+Here's the breakdown:
+
+Lasso Regression: In Lasso regression, the alpha parameter controls the amount of L1 regularization applied to the coefficients. L1 regularization shrinks coefficients towards zero, and some coefficients can even become exactly zero, leading to feature selection. In glmnet, when alpha is set to 0, it performs pure Lasso regression.
+
+Ridge Regression: In Ridge regression, the alpha parameter controls the L2 regularization. L2 regularization shrinks coefficients towards zero, but they never become exactly zero. This helps to reduce model complexity and potentially avoid overfitting, but it doesn't perform feature selection. Setting alpha to 1 in glmnet is equivalent to Ridge regression.
+
+Key Differences:
+
+The main difference between Lasso and Ridge regression lies in the penalty term used for regularization:
+
+Lasso (L1 penalty): Encourages sparsity, meaning some coefficients can become zero, leading to feature selection.
+Ridge (L2 penalty): Shrinks coefficients towards zero but doesn't set them to zero, promoting model stability but not necessarily selecting features.
+glmnet Functionality:
+
+The glmnet function in R is a versatile tool that can fit both Lasso and Ridge regression models. The alpha parameter controls the type of regularization applied:
+
+Alpha = 0: Pure Lasso regression (L1 penalty)
+0 < Alpha < 1: Mixture of L1 and L2 penalty (Elastic Net)
+Alpha = 1: Pure Ridge regression (L2 penalty)
+Choosing the Right Model:
+
+The choice between Lasso and Ridge regression depends on your specific goals:
+
+Feature Selection: If you want to identify a small subset of important features, Lasso might be a good choice.
+Model Stability: If reducing model complexity and avoiding overfitting is your primary concern, Ridge regression (alpha = 1 in glmnet) might be preferable.
+I hope this clarifies the relationship between alpha and the type of regression performed in glmnet
+
+## STEPWISE REGRESSION
+Stepwise regression is a technique used in statistical modeling to select a subset of variables from a larger set of potential predictor variables. It is a form of automated variable selection that iteratively adds or removes variables based on a predefined criterion, such as the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC). While stepwise regression can be a useful tool for identifying important predictors, it also comes with several limitations and considerations that researchers should be aware of.
+
+One of the main advantages of stepwise regression is its ability to handle large datasets with many potential predictor variables. By automatically selecting a subset of variables, stepwise regression can simplify the model and improve interpretability without requiring manual intervention. Additionally, stepwise regression can help identify multicollinearity among predictor variables, as it may exclude highly correlated variables during the variable selection process.
+
+However, stepwise regression also has several limitations that researchers should consider. One of the main concerns is the potential for overfitting the model to the data. Stepwise regression tends to select variables that are most strongly correlated with the outcome variable in the sample data, which may not generalize well to new data. This can result in a model that performs well on the training data but poorly on unseen data, leading to biased estimates and unreliable predictions.
+
+Another limitation of stepwise regression is its susceptibility to type I errors, also known as false positives. Because stepwise regression evaluates multiple models and selects the one with the best fit according to the chosen criterion, there is an increased risk of including variables that are not truly associated with the outcome variable. This can lead to spurious results and erroneous conclusions if not properly accounted for.
+
+Furthermore, stepwise regression can produce unstable results, particularly when the dataset is small or the predictor variables are highly correlated. The selection of variables in stepwise regression depends on the order in which variables are entered into the model, which can vary between different runs of the algorithm or with different subsets of the data. As a result, the final selected model may not be consistent or reproducible across different samples or datasets.
+
+Despite these limitations, stepwise regression can still be a valuable tool in certain contexts when used appropriately. It can help identify potential predictors for further investigation and hypothesis testing, especially in exploratory data analysis. Additionally, stepwise regression can serve as a baseline or starting point for more sophisticated modeling techniques, such as machine learning algorithms, that require feature selection or dimensionality reduction.
+
+To mitigate some of the limitations of stepwise regression, researchers should use cross-validation techniques to assess the generalizability of the selected model and to estimate its performance on unseen data. Additionally, it is important to interpret the results of stepwise regression cautiously and to consider the underlying assumptions and potential biases of the technique. Overall, while stepwise regression can be a useful tool in certain situations, it should be used judiciously and in conjunction with other methods to ensure robust and reliable results.
+
+### Practical Example
+```{r}
+## Load Iris data set
+data <- iris
+head(data,5)
+```
+
+### Perform stepwise regression using AIC as the selection criterion
+```{r}
+step_model <- step(lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, data = data), direction = "both")
+summary(step_model)
+```
+
+The output provided presents the results of a linear regression analysis with the dependent variable Sepal.Length and three predictor variables: Sepal.Width, Petal.Length, and Petal.Width. The model was selected using a stepwise regression approach based on the Akaike Information Criterion (AIC), resulting in the inclusion of all three predictor variables.
+
+The initial model, including all three predictor variables, had an AIC of -343.04. This represents the goodness of fit of the model, with lower AIC values indicating a better fit. The final model retained all three predictor variables, as indicated by the absence of any variables being removed during the stepwise selection process.
+
+The coefficient estimates for the predictor variables provide information about the direction and strength of their relationship with the dependent variable. In this case, the coefficients are as follows:
+
+The intercept term is 1.856, indicating the expected value of Sepal.Length when all predictor variables are zero.
+For every one-unit increase in Sepal.Width, Sepal.Length is expected to increase by 0.651 units.
+For every one-unit increase in Petal.Length, Sepal.Length is expected to increase by 0.709 units.
+For every one-unit increase in Petal.Width, Sepal.Length is expected to decrease by 0.556 units.
+These coefficient estimates are accompanied by standard errors, t-values, and p-values, which assess the significance of the coefficients. All coefficients are statistically significant at the 0.05 level, indicating that they are unlikely to have occurred by chance alone.
+
+The Residuals section provides information about the distribution of the residuals, which represent the differences between the observed and predicted values of the dependent variable. The residuals are approximately normally distributed, with a mean of zero and a standard deviation of 0.3145. This suggests that the model provides a good fit to the data, as the residuals are randomly distributed around zero.
+
+The Multiple R-squared value of 0.8586 indicates that approximately 85.86% of the variance in Sepal.Length is explained by the predictor variables included in the model. The Adjusted R-squared value of 0.8557 adjusts the R-squared value for the number of predictor variables in the model, providing a more accurate measure of the model's goodness of fit.
+
+The F-statistic tests the overall significance of the model, considering all predictor variables simultaneously. With a p-value of < 2.2e-16, the F-statistic is highly significant, indicating that the model as a whole is a good fit for the data.
+
+Overall, the results suggest that Sepal.Width, Petal.Length, and Petal.Width are all important predictors of Sepal.Length in the dataset. The model provides a good fit to the data and explains a substantial proportion of the variance in Sepal.Length. However, as with any statistical model, it is important to consider the assumptions underlying the analysis and the potential limitations of the data when interpreting the results.
+
+### Test the omitted variable bias
+#### Backward Selection
+```{r}
+library(olsrr)
+step_model.aic<-ols_step_backward_aic(step_model,details=TRUE)
+```
+
+### Forward Selection
+```{r}
+step_model.aic<-ols_step_forward_aic(step_model,details=TRUE)
+```
+
+Forward selection is a method of variable selection in regression analysis where predictor variables are added to the model one at a time based on a predetermined criterion, such as the Akaike Information Criterion (AIC) or the Bayesian Information Criterion (BIC). In this example, the forward selection method was used to identify predictor variables for predicting Sepal.Length in the dataset. The candidate terms considered for inclusion in the model were Sepal.Width, Petal.Length, and Petal.Width.
+
+The process begins with an initial model that includes no predictor variables (Step 0). The AIC for this model is 372.0795, which serves as a baseline for comparing subsequent models. The forward selection algorithm then iteratively evaluates the candidate terms and adds them to the model based on their impact on the AIC.
+
+In Step 1, the algorithm considers adding Petal.Length to the model. The resulting model, Sepal.Length ~ Petal.Length, has an AIC of 160.0404, which is significantly lower than the AIC of the initial model. This suggests that including Petal.Length improves the fit of the model.
+
+In Step 2, the algorithm considers adding Sepal.Width to the model. The resulting model, Sepal.Length ~ Petal.Length + Sepal.Width, has an even lower AIC of 101.0255, indicating that adding Sepal.Width further improves the fit of the model.
+
+The final model selected by the forward selection method includes three predictor variables: Petal.Length, Sepal.Width, and Petal.Width. These variables were chosen based on their individual contributions to reducing the AIC of the model.
+
+Now, let's interpret and discuss the inclusion of these variables in the final model.
+
+Petal.Length is a significant predictor variable in the final model. This variable represents the length of the petal of the iris flower. The positive coefficient associated with Petal.Length suggests that as the length of the petal increases, the sepal length is expected to increase as well. This is consistent with the biological understanding of iris flowers, where larger petals are often associated with larger sepals.
+
+Sepal.Width is also a significant predictor variable in the final model. This variable represents the width of the sepal of the iris flower. The positive coefficient associated with Sepal.Width suggests that as the width of the sepal increases, the sepal length is expected to increase as well. Again, this is consistent with the biological understanding of iris flowers, where larger sepals are often associated with larger petals.
+
+Finally, Petal.Width is a significant predictor variable in the final model. This variable represents the width of the petal of the iris flower. The negative coefficient associated with Petal.Width suggests that as the width of the petal increases, the sepal length is expected to decrease. This may seem counterintuitive at first, but it could be explained by the fact that wider petals may be associated with shorter sepals in certain species of iris flowers.
+
+Overall, the inclusion of Petal.Length, Sepal.Width, and Petal.Width in the final model suggests that these variables are important predictors of Sepal.Length in the dataset. The forward selection method has identified these variables based on their individual contributions to improving the fit of the model, as measured by the AIC. However, it is important to note that while forward selection can help identify significant predictors, it does not guarantee the best possible model. Researchers should always interpret the results of variable selection methods with caution and consider the underlying assumptions and limitations of the analysis.
+
+
+
+
+
+
+
+
+
+
